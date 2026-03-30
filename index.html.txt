@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dark Video Generator Tool</title>
+<style>
+:root {
+  --bg-color: #121212;
+  --primary-color: #1f1f1f;
+  --accent-color: #4cafef;
+  --text-color: #f5f5f5;
+  --button-color: #2c2c2c;
+  --button-hover: #4cafef;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.container { background-color: var(--primary-color); padding: 30px; border-radius: 15px; width: 100%; max-width: 600px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+h1 { margin-bottom: 20px; font-size: 2em; color: var(--accent-color); }
+
+input[type="text"], input[type="file"], select, input[type="number"] {
+  width: 80%; padding: 10px; margin: 10px 0; border-radius: 8px; border: none; background-color: #2a2a2a; color: var(--text-color);
+}
+button { padding: 12px 25px; background-color: var(--button-color); color: var(--text-color); border: none; border-radius: 8px; cursor: pointer; font-size: 1em; transition: background 0.3s; }
+button:hover { background-color: var(--button-hover); color: #fff; }
+video { margin-top: 20px; width: 100%; border-radius: 10px; background-color: #000; }
+.footer { margin-top: 15px; font-size: 0.85em; color: #aaa; }
+
+.tabs { margin-bottom: 15px; }
+.tab-btn { padding: 10px 20px; margin: 0 5px; background-color: #2a2a2a; color: var(--text-color); border: none; border-radius: 8px; cursor: pointer; }
+.tab-btn.active { background-color: var(--accent-color); color: #fff; }
+.settings label { display: block; margin: 10px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎥 Dark Video Generator</h1>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('text')">Text-to-Video</button>
+    <button class="tab-btn" onclick="switchTab('image')">Image-to-Video</button>
+    <button class="tab-btn" onclick="switchTab('voice')">Voice-to-Video</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-content" id="text-tab">
+    <input type="text" id="textInput" placeholder="Enter video description...">
+  </div>
+  <div class="tab-content" id="image-tab" style="display:none">
+    <input type="file" id="imageInput" accept="image/*">
+  </div>
+  <div class="tab-content" id="voice-tab" style="display:none">
+    <input type="file" id="voiceInput" accept="audio/*">
+  </div>
+
+  <div class="settings">
+    <label>Duration (sec): <input type="number" id="duration" value="10" min="1" max="60"></label>
+    <label>Aspect Ratio:
+      <select id="ratio">
+        <option value="16:9">16:9</option>
+        <option value="9:16">9:16</option>
+        <option value="1:1">1:1</option>
+      </select>
+    </label>
+  </div>
+
+  <button id="generateBtn">Generate Video</button>
+  <video id="videoPlayer" controls></video>
+  <div class="footer">Single Page Dark Video Generator | GitHub Ready</div>
+</div>
+
+<script>
+let currentTab = 'text';
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-content').forEach(tc => tc.style.display='none');
+  document.getElementById(tab+'-tab').style.display='block';
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
+}
+
+document.getElementById('generateBtn').addEventListener('click', async ()=>{
+  const videoPlayer = document.getElementById('videoPlayer');
+  const duration = document.getElementById('duration').value;
+  const ratio = document.getElementById('ratio').value;
+
+  if(currentTab==='text'){
+    const text = document.getElementById('textInput').value;
+    if(!text) return alert('Enter text!');
+    console.log(`Text-to-Video: "${text}", Duration: ${duration}s, Ratio: ${ratio}`);
+  } else if(currentTab==='image'){
+    const img = document.getElementById('imageInput').files[0];
+    if(!img) return alert('Upload an image!');
+    console.log(`Image-to-Video: "${img.name}", Duration: ${duration}s, Ratio: ${ratio}`);
+  } else if(currentTab==='voice'){
+    const voice = document.getElementById('voiceInput').files[0];
+    if(!voice) return alert('Upload a voice file!');
+    console.log(`Voice-to-Video: "${voice.name}", Duration: ${duration}s, Ratio: ${ratio}`);
+  }
+
+  // Placeholder video
+  videoPlayer.src = "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4";
+  videoPlayer.play();
+});
+</script>
+</body>
+</html>
